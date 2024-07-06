@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { LngLatLike, Map } from 'mapbox-gl';
+import { LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
+import { Feature } from '../interfaces/places';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,7 @@ import { LngLatLike, Map } from 'mapbox-gl';
 export class MapService {
 
   private map?: Map;
+  private markers: Marker[] = [];
 
   get isMapReady() {
     return !!this.map;
@@ -24,6 +26,35 @@ export class MapService {
       center: coords
     });
 
+  }
+
+
+  createMarkersFromPlaces(places: Feature[], userLocation: [number, number]) {
+
+    if ( !this.map ) throw Error('Mapa no inicializado');
+
+    this.markers.forEach( marker => marker.remove() );
+    const newMarkers = [];
+
+    for(const place of places) {
+      const lat = place.properties.coordinates.latitude;
+      const lng = place.properties.coordinates.longitude;
+
+      const popup = new Popup()
+        .setHTML(`
+          <h6>${ place.properties.name }</h6>
+          <span>${ place.properties.name_preferred }</span>
+        `);
+
+      const newMarker = new Marker()
+        .setLngLat([ lng, lat ])
+        .setPopup( popup )
+        .addTo( this.map! );
+
+      newMarkers.push( newMarker );
+    }
+
+    this.markers = newMarkers;
   }
 
 }
