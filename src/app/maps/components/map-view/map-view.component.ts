@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Map } from 'mapbox-gl';
+import { Map, Popup, Marker } from 'mapbox-gl';
 import { PlacesService } from '../../services';
 
 @Component({
@@ -25,6 +25,17 @@ export class MapViewComponent implements AfterViewInit {
       center: this.placesService.useLocation, // starting position [lng, lat]
       zoom: 14, // starting zoom
     });
+
+    const popup = new Popup()
+      .setHTML(`
+        <h6>Aqui estoy</h6>
+        <span>Estoy en este lugar del mundo</span>
+      `);
+
+    new Marker({ color: 'red' })
+      .setLngLat( this.placesService.useLocation )
+      .setPopup( popup )
+      .addTo( map )
 
   }
 
