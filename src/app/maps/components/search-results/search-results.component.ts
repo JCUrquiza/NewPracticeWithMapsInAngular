@@ -32,4 +32,18 @@ export class SearchResultsComponent {
     this.mapService.flyTo([lng, lat]);
   }
 
+  getDirections( place: Feature ) {
+    if ( !this.placesService.useLocation ) throw Error('No hay userLocation');
+
+    this.placesService.deletePlaces();
+
+    const start = this.placesService.useLocation;
+
+    const lng = place.properties.coordinates.longitude;
+    const lat = place.properties.coordinates.latitude;
+    const end = [lng, lat] as [number, number];
+
+    this.mapService.getRouteBetweenPoints(start, end);
+  }
+
 }
